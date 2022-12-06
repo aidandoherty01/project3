@@ -2,44 +2,46 @@
 #include <string>
 #include <vector>
 #include <list>
+int generateHash(std::string name);
 
 
-int main()
-{
-    //generate data
-	//TODO: create HashTable object to import data and perform operations
-
-
-
-}
 
 //create hash data structure
 
 class HashTable {
 	int size;
 public:
+	HashTable(int c);
 	void insertItem(std::string, int data);
 	void deleteItem(std::string);
+	void displayTable();
 	
 private:
-	std::list<int>* items;
+	std::list<std::pair<std::string, int>>* items;
+	//pointer to a list containing keys
 	int hashFunction(std::string);
 };
 
+HashTable::HashTable(int c) {
+	this->size = c;
+	items = new std::list<std::pair<std::string, int>>[size];
+}
+
 void HashTable::insertItem(std::string key, int data) {
 	int index = hashFunction(key);
-	items[index].push_back(data);
+	items[index].push_back(std::pair<std::string, int>(key, data));
 }
 
 void HashTable::deleteItem(std::string key) {
 	int index = hashFunction(key);
 	auto it = items[index].begin();
 	for (it = items[index].begin(); it != items[index].end(); it++) {
-		//TODO: determine if this is correct
-		if (*it == index) {
+		//TODO: fix below
+		if (*it.first == key) {
 			break;
 		}
 	}
+
 
 	if (it != items[index].end()) {
 		items[index].erase(it);
@@ -49,7 +51,7 @@ void HashTable::deleteItem(std::string key) {
 
 int HashTable::hashFunction(std::string name) {
 	//implement polynomial rolling function
-	int p = 5;
+	/*int p = 5;
 	long m = 1e9 + 9;
 	long hash = 0;
 	long power = 1;
@@ -57,7 +59,25 @@ int HashTable::hashFunction(std::string name) {
 		hash = (hash + (c - 'a' + 1) * power) % m;
 		power = (power * p) % m;
 	}
+	return hash;*/
+	long hash = 0;
+	for (char c : name) {
+		hash += c;
+	}
 	return hash;
+}
+
+void HashTable::displayTable() {
+	for (int i = 0; i < size; i++)
+	{
+		if (items[i].size() != 0) {
+			std::cout << "items[" << i << "]";
+			for (auto x : items[i])
+				std::cout << " --> " << x.first << " " << x.second;
+			std::cout << std::endl;
+		}
+		
+	}
 }
 
 void hashData() {
@@ -71,4 +91,37 @@ void hashData() {
 
 }
 
+int generateHash(std::string name) {
+	//implement polynomial rolling function
+	int p = 5;
+	long m = 1e9 + 9;
+	long hash = 0;
+	long power = 1;
+	for (char c : name) {
+		hash = (hash + (c - 'a' + 1) * power) % m;
+		power = (power * p) % m;
+	}
+	return hash;
+}
 
+using namespace std;
+int main()
+{
+	//generate data
+	//create HashTable object to import data and perform operations
+
+	HashTable myTable = HashTable(100000);
+	myTable.insertItem("blue", 35); 
+	myTable.displayTable();
+	myTable.insertItem("dogs", 18);
+	myTable.insertItem("apple", 20);
+	myTable.displayTable();
+	
+	/*std::list<std::string>* myItems;
+	myItems = new list<std::string>[30];
+	myItems[24].push_back("blue");*/
+
+
+
+
+}
