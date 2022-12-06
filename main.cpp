@@ -23,7 +23,7 @@ public:
 	void insertItem(std::string, int data);
 	void deleteItem(std::string);
 	void displayTable();
-	
+
 private:
 	std::list<std::pair<std::string, int>>* items;
 	//pointer to a list containing keys
@@ -38,7 +38,7 @@ HashTable::HashTable(int c) {
 void HashTable::insertItem(std::string key, int data) {
 	int index = hashFunction(key);
 	items[index].push_back(std::pair<std::string, int>(key, data));
-	std::cout << "Inserting " << key << " at index " << index << std::endl;
+	//std::cout << "Inserting " << key << " at index " << index << std::endl;
 }
 
 void HashTable::deleteItem(std::string key) {
@@ -52,7 +52,7 @@ void HashTable::deleteItem(std::string key) {
 
 	if (it != items[index].end()) {
 		items[index].erase(it);
-		std::cout << "Deleting " << key << " at index " << index << std::endl;
+		//std::cout << "Deleting " << key << " at index " << index << std::endl;
 	}
 
 }
@@ -61,7 +61,9 @@ long long HashTable::hashFunction(std::string name) {
 	//implement polynomial rolling function
 	//TODO - math overflow
 	//FIX - decreased size of m
-	int p = 31;
+
+	//TEMPORARILY REMOVING 
+	/*int p = 31;
 	long long m = 12289; //1e9 + 9;
 	long long hash = 0;
 	long long power = 1;
@@ -70,8 +72,20 @@ long long HashTable::hashFunction(std::string name) {
 		hash = (hash + (b - 'A' + 1) * power) % m;
 		power = (power * p) % m;
 	}
-	//std::cout << "hash = " << hash << std::endl;
+	return hash;*/
+
+	//ALTERNATE HASH
+	long hash = 0;
+	int x = 1;
+	for (char c : name) {
+		hash = hash + (c * x);
+		x++;
+	}
 	return hash;
+
+
+
+
 	/*
 	long hash = 0;
 	for (char c : name) {
@@ -90,7 +104,7 @@ void HashTable::displayTable() {
 				std::cout << " --> " << x.first << " " << x.second;
 			std::cout << std::endl;
 		}
-		
+
 	}
 }
 
@@ -108,8 +122,10 @@ void hashData() {
 using namespace std;
 int main()
 {
+	cout << "Loading program..." << endl;
+
 	//generate and import data
-	
+
 	int i;
 	//reading files
 	vector<string> firstNames, lastNames;
@@ -155,7 +171,7 @@ int main()
 	myTable.displayTable();
 	myTable.deleteItem("apple");
 	myTable.displayTable();
-	
+
 	//testing chaining
 	myTable.insertItem("hello", 300);
 	myTable.insertItem("hello", 900);
@@ -189,31 +205,32 @@ int main()
 	while (option != 0) {
 		if (option > 9) {
 			std::cout << "Invalid option, please try again" << std::endl;
-			
+
 		}
 		else if (option == 1) {
 			//import all data 
 			//and record time it takes
 
-			auto exeBegin = high_resolution_clock::now(); 
+			auto exeBegin = high_resolution_clock::now();
 			//INSERT ALL DATA INTO HASH TABLE HERE
 				//still gives error at some point - not sure if overflow or what
 			for (int i = 0; i < phoneBook.size(); i++) {
 				myTable.insertItem(phoneBook.at(i).first, phoneBook.at(i).second);
 			}
-			auto exeEnd = high_resolution_clock::now(); 
-			auto executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin); 
+			auto exeEnd = high_resolution_clock::now();
+			auto executionTime = duration_cast<milliseconds>(exeEnd - exeBegin);
 			ht_insert_all = executionTime.count();
+			std::cout << "Succesfully imported data into Hash Table" << std::endl;
 
 			exeBegin = high_resolution_clock::now();
 			//INSERT ALL DATA INTO MAP HERE
 			for (auto x : phoneBook) {
-                	myMap.insert(x);
-            		}
+				myMap.insert(x);
+			}
 			exeEnd = high_resolution_clock::now();
-			executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
+			executionTime = duration_cast<milliseconds>(exeEnd - exeBegin);
 			map_insert_all = executionTime.count();
-
+			std::cout << "Successfully imported data into Map" << std::endl;
 
 		}
 		else if (option == 2) {
@@ -221,11 +238,14 @@ int main()
 			std::string userName;
 			int userNumber;
 			std::cout << "Enter the name to be added" << std::endl;
-			cin >> userName;			
+			cin.ignore();
+			std::getline(std::cin, userName);
+			//cin >> userName;
 			std::cout << "Enter the number to be added" << std::endl;
 			cin >> userNumber;
 			//call insert function
 			myTable.insertItem(userName, userNumber);
+			std::cout << "Succesfully inserted data into Hash Table" << std::endl;
 
 		}
 		else if (option == 3) {
@@ -233,38 +253,43 @@ int main()
 			std::string userName;
 			int userNumber;
 			std::cout << "Enter the name to be added" << std::endl;
+			cin.ignore();
 			std::getline(std::cin, userName);
 			//cin >> userName;
 			std::cout << "Enter the number to be added" << std::endl;
 			cin >> userNumber;
 			//call insert function
 			myMap.insert(make_pair(userName, userNumber));
+			std::cout << "Succesfully inserted data into Hash Table" << std::endl;
+
 		}
 		else if (option == 4) {
 			//delete own from hash table
 			std::string userName;
 			std::cout << "Enter the name to be deleted" << std::endl;
-			cin >> userName;
+			cin.ignore();
+			std::getline(std::cin, userName);
 			//call delete function
 			myTable.deleteItem(userName);
+			//TODO - CHECK IF ITEM WAS ACTUALLY FOUND (FOR MAP TOO)
+			std::cout << "Succesfully deleted data from Hash Table" << std::endl;
+
 		}
 		else if (option == 5) {
 			//delete from map
 			std::string userName;
 			std::cout << "Enter the name to be deleted" << std::endl;
-			cin >> userName;
+			cin.ignore();
+			std::getline(std::cin, userName);
 			//call delete function
 			myMap.erase(userName);
+			std::cout << "Succesfully deleted data from Map" << std::endl;
+
 		}
 		else if (option == 6) {
 			//print from time complexity analysis
 
-			//TODO - decide exactly which operations to test
-
 			//insert
-				//i'm thinking we record how long it takes for when we insert ALL data, and then
-				//calculate here for one piece of data
-
 			int ht_insert_time = 0;
 			int map_insert_time = 0;
 
@@ -281,15 +306,40 @@ int main()
 			executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
 			map_insert_time = executionTime.count();
 
-			std::cout << executionTime.count() << " nanoseconds" << endl; //Output
+			//deletion
+			int ht_delete_time = 0;
+			int map_delete_time = 0;
 
-			//delete
-				//need to search for something we know is in data structures to delete 
-				//or multiple items to show a difference in time complexity
+			exeBegin = high_resolution_clock::now();
+			myTable.deleteItem("John");
+			exeEnd = high_resolution_clock::now();
+			executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
+			ht_delete_time = executionTime.count();
+
+			exeBegin = high_resolution_clock::now();
+			myMap.erase("John");
+			exeEnd = high_resolution_clock::now();
+			executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
+			map_delete_time = executionTime.count();
 
 			//find? need to write hash table function for this if so
 
 			//print all findings
+			//TODO - ADD O(N) CALCULATIONS
+			std::cout << endl;
+			std::cout << "Time Complexity of Hash Table and Map Operations:" << std::endl;
+			std::cout << "================Insertion================" << std::endl;
+			std::cout << "Hash Table:" << std::endl;
+			std::cout << "\tInserting one item: " << ht_insert_time << " nanoseconds" << std::endl;
+			std::cout << "\tInserting all items: " << ht_insert_all << " milliseconds" << std::endl;
+			std::cout << "Map:" << std::endl;
+			std::cout << "\tInserting one item: " << map_insert_time << " nanoseconds" << std::endl;
+			std::cout << "\tInserting all items: " << map_insert_all << " milliseconds" << std::endl;
+			std::cout << "================Deletion================" << std::endl;
+			std::cout << "Hash Table:" << std::endl;
+			std::cout << "\tDeleting one item: " << ht_delete_time << " nanoseconds" << std::endl;
+			std::cout << "Map:" << std::endl;
+			std::cout << "\tDeleting one item: " << map_delete_time << " nanoseconds" << std::endl;
 
 		}
 		else if (option == 7) {
@@ -299,9 +349,9 @@ int main()
 		else if (option == 8) {
 			//display map
 			cout << "Ordered Map Data:" << endl;
-            		for (auto iter = myMap.begin(); iter != myMap.end(); iter++) {
-               			cout << iter->first << " " << iter->second << endl;
-            		}
+			for (auto iter = myMap.begin(); iter != myMap.end(); iter++) {
+				cout << iter->first << " " << iter->second << endl;
+			}
 		}
 		else if (option == 9) {
 			//reprint options	
@@ -317,6 +367,7 @@ int main()
 			std::cout << "Press 9 to redisplay options" << std::endl;
 			std::cout << "Press 0 to quit" << std::endl;
 		}
+		std::cout << endl;
 		std::cout << "Enter another option or press 0 to quit: " << std::endl;
 		cin >> option;
 	}
