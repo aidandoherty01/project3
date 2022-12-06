@@ -8,10 +8,13 @@
 #include <unordered_set>
 #include <map>
 
+
+using namespace std;
+using namespace std::chrono;
+
 int readFile(vector<string>& names, string file);
 void generatePhoneNumbers(unordered_set<unsigned long int>& numbers, int max);
 
-using namespace std::chrono;
 
 class HashTable {
 	int size;
@@ -63,10 +66,11 @@ long long HashTable::hashFunction(std::string name) {
 	long long hash = 0;
 	long long power = 1;
 	for (char c : name) {
-		hash = (hash + (c - 'a' + 1) * power) % m;
+		long long b = (long)c;
+		hash = (hash + (b - 'A' + 1) * power) % m;
 		power = (power * p) % m;
 	}
-	std::cout << "hash = " << hash << std::endl;
+	//std::cout << "hash = " << hash << std::endl;
 	return hash;
 	/*
 	long hash = 0;
@@ -193,6 +197,10 @@ int main()
 
 			auto exeBegin = high_resolution_clock::now(); 
 			//INSERT ALL DATA INTO HASH TABLE HERE
+				//still gives error at some point - not sure if overflow or what
+			for (int i = 0; i < phoneBook.size(); i++) {
+				myTable.insertItem(phoneBook.at(i).first, phoneBook.at(i).second);
+			}
 			auto exeEnd = high_resolution_clock::now(); 
 			auto executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin); 
 			ht_insert_all = executionTime.count();
