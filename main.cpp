@@ -146,7 +146,7 @@ int main()
 	HashTable myTable = HashTable(1000000);
 
 	//create Map object
-
+	map<string, unsigned long int> myMap;
 
 	//testing
 	/*myTable.insertItem("blue", 35);
@@ -207,6 +207,9 @@ int main()
 
 			exeBegin = high_resolution_clock::now();
 			//INSERT ALL DATA INTO MAP HERE
+			for (auto x : phoneBook) {
+                	myMap.insert(x);
+            		}
 			exeEnd = high_resolution_clock::now();
 			executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
 			map_insert_all = executionTime.count();
@@ -235,6 +238,7 @@ int main()
 			std::cout << "Enter the number to be added" << std::endl;
 			cin >> userNumber;
 			//call insert function
+			myMap.insert(make_pair(userName, userNumber));
 		}
 		else if (option == 4) {
 			//delete own from hash table
@@ -250,6 +254,7 @@ int main()
 			std::cout << "Enter the name to be deleted" << std::endl;
 			cin >> userName;
 			//call delete function
+			myMap.erase(userName);
 		}
 		else if (option == 6) {
 			//print from time complexity analysis
@@ -271,6 +276,7 @@ int main()
 
 			exeBegin = high_resolution_clock::now();
 			//INSERT DATA ITEM INTO MAP
+			myMap.insert(make_pair("John", 899220000));
 			exeEnd = high_resolution_clock::now();
 			executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
 			map_insert_time = executionTime.count();
@@ -292,6 +298,10 @@ int main()
 		}
 		else if (option == 8) {
 			//display map
+			cout << "Ordered Map Data:" << endl;
+            		for (auto iter = myMap.begin(); iter != myMap.end(); iter++) {
+               			cout << iter->first << " " << iter->second << endl;
+            		}
 		}
 		else if (option == 9) {
 			//reprint options	
