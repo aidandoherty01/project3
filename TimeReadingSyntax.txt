@@ -1,7 +1,0 @@
-#include <chrono> //from std library
-using namespace std;
-
-auto exeBegin = chrono::high_resolution_clock::now(); //place before function execution
-auto exeEnd = chrono::high_resolution_clock::now(); //place after function execution
-auto executionTime = chrono::duration_cast<nanoseconds>(end - begin); // place after exeEnd
-cout << executionTime.count << " nanoseconds" << endl; //Output
