@@ -1,160 +1,54 @@
 #include <fstream>
+#include <vector>
 #include <iostream>
 #include <string>
-#include <vector>
-#include <list>
-#include <chrono>
 #include <random>
 #include <unordered_set>
+#include <chrono>
 #include <map>
-
-
+#include "hash.h"
 using namespace std;
 using namespace std::chrono;
 
 int readFile(vector<string>& names, string file);
 void generatePhoneNumbers(unordered_set<unsigned long int>& numbers, int max);
+unsigned long int createMap(vector<pair<string, unsigned long int>>& phoneBook, map<string, unsigned long int>& newMap);
+void menu();
 
-
-class HashTable {
-	int size;
-public:
-	HashTable(int c);
-	void insertItem(std::string, int data);
-	void deleteItem(std::string);
-	void displayTable();
-
-private:
-	std::list<std::pair<std::string, int>>* items;
-	//pointer to a list containing keys
-	long long hashFunction(std::string);
-};
-
-HashTable::HashTable(int c) {
-	this->size = c;
-	items = new std::list<std::pair<std::string, int>>[size];
-}
-
-void HashTable::insertItem(std::string key, int data) {
-	int index = hashFunction(key);
-	items[index].push_back(std::pair<std::string, int>(key, data));
-	//std::cout << "Inserting " << key << " at index " << index << std::endl;
-}
-
-void HashTable::deleteItem(std::string key) {
-	int index = hashFunction(key);
-	auto it = items[index].begin();
-	for (it = items[index].begin(); it != items[index].end(); it++) {
-		if (it->first == key) {
-			break;
-		}
-	}
-
-	if (it != items[index].end()) {
-		items[index].erase(it);
-		//std::cout << "Deleting " << key << " at index " << index << std::endl;
-	}
-
-}
-
-long long HashTable::hashFunction(std::string name) {
-	//implement polynomial rolling function
-	//TODO - math overflow
-	//FIX - decreased size of m
-
-	//TEMPORARILY REMOVING 
-	/*int p = 31;
-	long long m = 12289; //1e9 + 9;
-	long long hash = 0;
-	long long power = 1;
-	for (char c : name) {
-		long long b = (long)c;
-		hash = (hash + (b - 'A' + 1) * power) % m;
-		power = (power * p) % m;
-	}
-	return hash;*/
-
-	//ALTERNATE HASH
-	long hash = 0;
-	int x = 1;
-	for (char c : name) {
-		hash = hash + (c * x);
-		x++;
-	}
-	return hash;
-
-
-
-
-	/*
-	long hash = 0;
-	for (char c : name) {
-		hash += c;
-	}
-	return hash;*/
-}
-
-void HashTable::displayTable() {
-	std::cout << "Hash Table Data:" << std::endl;
-	for (int i = 0; i < size; i++)
-	{
-		if (items[i].size() != 0) {
-			std::cout << "items[" << i << "]";
-			for (auto x : items[i])
-				std::cout << " --> " << x.first << " " << x.second;
-			std::cout << std::endl;
-		}
-
-	}
-}
-
-void hashData() {
-	//import data from main 
-	std::vector<std::string> data; //placeholder
-	//call insert function of HashTable object for each data pair
-	//TODO: create HashTable object in main
-	for (std::string n : data) {
-		//TODO: insert pair item for each line of data
-	}
-
-}
-
-using namespace std;
 int main()
 {
-	cout << "Loading program..." << endl;
+	cout << "Please wait while data is being generated.\n" << endl;
 
-	//generate and import data
+    int i;
+    //reading files
+    vector<string> firstNames, lastNames;
+    string fileName1 = "first-names.csv";
+    string fileName2 = "last-names.csv";
+    //if either file fails to read, throw an error and stop the program
+    if (!readFile(firstNames, fileName1) || !readFile(lastNames, fileName2))
+    {
+        cout << "Error: File could not be opened" << endl;
+        return -1;
+    }
 
-	int i;
-	//reading files
-	vector<string> firstNames, lastNames;
-	string fileName1 = "first-names.csv";
-	string fileName2 = "last-names.csv";
-	//if either file fails to read, throw an error and stop the program
-	if (!readFile(firstNames, fileName1) || !readFile(lastNames, fileName2))
-	{
-		cout << "Error: File could not be opened" << endl;
-		return -1;
-	}
-	//generating random unique phonenumbers (10 digit integers)
-	int max = (firstNames.size() < lastNames.size()) ? firstNames.size() : lastNames.size();
-	unordered_set<unsigned long int> numbers;
-	generatePhoneNumbers(numbers, max);
-	//creating phone book
-	vector<pair<string, unsigned long int>> phoneBook;
-	string fullName;
-	auto iter = numbers.begin();
-	//creates an entry for each name and phonenumber pairing
-	for (i = 0; i < max; i++)
-	{
-		//concatenates the first and last names together
-		fullName = firstNames[i] + " " + lastNames[i];
-		//stores our new contact in the phoneBook vector
-		phoneBook.push_back(make_pair(fullName, *iter++));
-		//cout << phoneBook[i].first << ": " << phoneBook[i].second << endl;
-	}
+    //generating random unique phonenumbers (10 digit integers)
+    int max = (firstNames.size() < lastNames.size()) ? firstNames.size() : lastNames.size();
+    unordered_set<unsigned long int> numbers;
+    generatePhoneNumbers(numbers, max);
 
+    //creating phone book
+    vector<pair<string, unsigned long int>> phoneBook;
+    string fullName;
+    auto iter = numbers.begin();
+    //creates an entry for each name and phonenumber pairing
+    for (i = 0; i < max; i++)
+    {
+        //concatenates the first and last names together
+        fullName = firstNames[i] + " " + lastNames[i];
+        //stores our new contact in the phoneBook vector
+        phoneBook.push_back(make_pair(fullName, *iter++));
+        //cout << phoneBook[i].first << ": " << phoneBook[i].second << endl;
+    }
 
 	//END GENERATION OF DATA
 
@@ -164,238 +58,229 @@ int main()
 	//create Map object
 	map<string, unsigned long int> myMap;
 
-	//testing
-	/*myTable.insertItem("blue", 35);
-	myTable.insertItem("dogs", 18);
-	myTable.insertItem("apple", 20);
-	myTable.displayTable();
-	myTable.deleteItem("apple");
-	myTable.displayTable();
-
-	//testing chaining
-	myTable.insertItem("hello", 300);
-	myTable.insertItem("hello", 900);
-	myTable.displayTable();*/
-
+	//variable initialization
+	int option;
+	string userName;
+	unsigned long int userNumber;
+	unsigned long long int ht_insert_all = 0;
+	unsigned long long int map_insert_all = 0;
 
 	//user interface
-	std::cout << "Welcome to the Hash Table vs. Map Comparison" << std::endl;
-	std::cout << "The purpose of this program is to compare the time complexity for various operations of these two data structures, specifically for storing user data" << std::endl;
-	std::cout << endl;
-
-	int option = 0;
-	std::cout << "Select an option below" << std::endl;
-	std::cout << "Press 1 to import all data into both structures" << std::endl;
-	std::cout << "Press 2 to import your own data into a Hash Table" << std::endl;
-	std::cout << "Press 3 to import your own data into a Map" << std::endl;
-	std::cout << "Press 4 to delete data from a Hash Table" << std::endl;
-	std::cout << "Press 5 to delete data from a Map" << std::endl;
-	std::cout << "Press 6 to print time copmlexity anslysis of data structure operations" << std::endl;
-	std::cout << "Press 7 to display the Hash Table" << std::endl;
-	std::cout << "Press 8 to display the Map" << std::endl;
-	std::cout << "Press 9 to redisplay options" << std::endl;
-	std::cout << "Press 0 to quit" << std::endl;
+	cout << "*Welcome to the Hash Table vs. Map Comparison*\n"
+		"- The purpose of this program is to compare the time complexity for various operations of these two data structures, specifically for storing user data\n"
+		<< endl;
+	menu();
+	cout << "Option: ";
 	cin >> option;
+	cout << endl;
 
 	//FIX - IF SPACE IN INSERTED NAME, GIVES ERROR
 
 	//handle user input
-	int ht_insert_all = 0;
-	int map_insert_all = 0;
+
 	while (option != 0) {
-		if (option > 9) {
-			std::cout << "Invalid option, please try again" << std::endl;
+		switch (option)
+		{
+			case 1:
+			{
+				/*
+				//clearing data
+				myTable.clear();
+				myMap.clear();
+				*/
 
-		}
-		else if (option == 1) {
-			//import all data 
-			//and record time it takes
+				//import all data and record time it takes
 
-			auto exeBegin = high_resolution_clock::now();
-			//INSERT ALL DATA INTO HASH TABLE HERE
-				//still gives error at some point - not sure if overflow or what
-			for (int i = 0; i < phoneBook.size(); i++) {
-				myTable.insertItem(phoneBook.at(i).first, phoneBook.at(i).second);
+				//INSERT ALL DATA INTO HASH TABLE HERE
+				auto exeBegin = high_resolution_clock::now();
+				for (int i = 0; i < max; i++) {
+					myTable.insertItem(phoneBook.at(i).first, phoneBook.at(i).second);
+				}
+				auto exeEnd = high_resolution_clock::now();
+				auto executionTime = duration_cast<milliseconds>(exeEnd - exeBegin);
+				ht_insert_all = executionTime.count();
+				cout << "Hash Table Insertion Complete" << endl;
+
+				//INSERT ALL DATA INTO MAP HERE
+				exeBegin = high_resolution_clock::now();
+				for (auto x : phoneBook) {
+					myMap.insert(x);
+				}
+				exeEnd = high_resolution_clock::now();
+				executionTime = duration_cast<milliseconds>(exeEnd - exeBegin);
+				map_insert_all = executionTime.count();
+				cout << "Map Insertion Complete" << endl;
+
+				break;
 			}
-			auto exeEnd = high_resolution_clock::now();
-			auto executionTime = duration_cast<milliseconds>(exeEnd - exeBegin);
-			ht_insert_all = executionTime.count();
-			std::cout << "Succesfully imported data into Hash Table" << std::endl;
+			case 2:
+			{
+				//import own data into hash table 
+				cout << "Enter the name to be added" << endl;
+				getline(cin, userName);
+				cout << "Enter the number to be added" << endl;
+				cin >> userNumber;
+				//call insert function
+				myTable.insertItem(userName, userNumber);
+				cout << "Succesfully inserted data into Hash Table" << endl;
 
-			exeBegin = high_resolution_clock::now();
-			//INSERT ALL DATA INTO MAP HERE
-			for (auto x : phoneBook) {
-				myMap.insert(x);
+				break;
 			}
-			exeEnd = high_resolution_clock::now();
-			executionTime = duration_cast<milliseconds>(exeEnd - exeBegin);
-			map_insert_all = executionTime.count();
-			std::cout << "Successfully imported data into Map" << std::endl;
+			case 3:
+			{
+				//import own data into Map
+				cout << "Enter the name to be added" << std::endl;
+				getline(cin, userName);
+				//cin >> userName;
+				cout << "Enter the number to be added" << std::endl;
+				cin >> userNumber;
+				//call insert function
+				myMap.insert(make_pair(userName, userNumber));
+				cout << "Succesfully inserted data into Hash Table" << endl;
 
-		}
-		else if (option == 2) {
-			//import own data into hash table 
-			std::string userName;
-			int userNumber;
-			std::cout << "Enter the name to be added" << std::endl;
-			cin.ignore();
-			std::getline(std::cin, userName);
-			//cin >> userName;
-			std::cout << "Enter the number to be added" << std::endl;
-			cin >> userNumber;
-			//call insert function
-			myTable.insertItem(userName, userNumber);
-			std::cout << "Succesfully inserted data into Hash Table" << std::endl;
+				break;
+			}
+			case 4:
+			{
+				//delete own from hash table
+				cout << "Enter the name to be deleted" << endl;
+				getline(cin, userName);
+				//call delete function
+				myTable.deleteItem(userName);
+				cout << "Succesfully deleted data from Hash Table" << endl;
 
-		}
-		else if (option == 3) {
-			//import own data into Map
-			std::string userName;
-			int userNumber;
-			std::cout << "Enter the name to be added" << std::endl;
-			cin.ignore();
-			std::getline(std::cin, userName);
-			//cin >> userName;
-			std::cout << "Enter the number to be added" << std::endl;
-			cin >> userNumber;
-			//call insert function
-			myMap.insert(make_pair(userName, userNumber));
-			std::cout << "Succesfully inserted data into Hash Table" << std::endl;
+				break;
+			}
+			case 5:
+			{
+				//delete from map
+				cout << "Enter the name to be deleted" << endl;
+				cin >> userName;
+				//call delete function
+				myMap.erase(userName);
+				cout << "Succesfully deleted data from Map" << endl;
 
-		}
-		else if (option == 4) {
-			//delete own from hash table
-			std::string userName;
-			std::cout << "Enter the name to be deleted" << std::endl;
-			cin.ignore();
-			std::getline(std::cin, userName);
-			//call delete function
-			myTable.deleteItem(userName);
-			//TODO - CHECK IF ITEM WAS ACTUALLY FOUND (FOR MAP TOO)
-			std::cout << "Succesfully deleted data from Hash Table" << std::endl;
+				break;
+			}
+			case 6:
+			{
+				//print from time complexity analysis
 
-		}
-		else if (option == 5) {
-			//delete from map
-			std::string userName;
-			std::cout << "Enter the name to be deleted" << std::endl;
-			cin.ignore();
-			std::getline(std::cin, userName);
-			//call delete function
-			myMap.erase(userName);
-			std::cout << "Succesfully deleted data from Map" << std::endl;
+				//INSERTION
+				unsigned long int ht_insert_time = 0;
+				unsigned long int map_insert_time = 0;
 
-		}
-		else if (option == 6) {
-			//print from time complexity analysis
+				//Inserting item into hash table
+				auto exeBegin = high_resolution_clock::now();
+				myTable.insertItem("John", 899220000);
+				auto exeEnd = high_resolution_clock::now();
+				auto executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
+				ht_insert_time = executionTime.count();
 
-			//insert
-			int ht_insert_time = 0;
-			int map_insert_time = 0;
+				//Inserting item into map
+				exeBegin = high_resolution_clock::now();
+				myMap.insert(make_pair("John", 899220000));
+				exeEnd = high_resolution_clock::now();
+				executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
+				map_insert_time = executionTime.count();
 
-			auto exeBegin = high_resolution_clock::now(); //place before function execution
-			myTable.insertItem("John", 899220000);
-			auto exeEnd = high_resolution_clock::now(); //place after function execution
-			auto executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin); // place after exeEnd
-			ht_insert_time = executionTime.count();
+				//DELETION
+				unsigned long int ht_delete_time = 0;
+				unsigned long int map_delete_time = 0;
 
-			exeBegin = high_resolution_clock::now();
-			//INSERT DATA ITEM INTO MAP
-			myMap.insert(make_pair("John", 899220000));
-			exeEnd = high_resolution_clock::now();
-			executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
-			map_insert_time = executionTime.count();
+				//Deleting item from the hash table
+				exeBegin = high_resolution_clock::now();
+				myTable.deleteItem("John");
+				exeEnd = high_resolution_clock::now();
+				executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
+				ht_delete_time = executionTime.count();
 
-			//deletion
-			int ht_delete_time = 0;
-			int map_delete_time = 0;
+				//Deleting item from the map
+				exeBegin = high_resolution_clock::now();
+				myMap.erase("John");
+				exeEnd = high_resolution_clock::now();
+				executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
+				map_delete_time = executionTime.count();
 
-			exeBegin = high_resolution_clock::now();
-			myTable.deleteItem("John");
-			exeEnd = high_resolution_clock::now();
-			executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
-			ht_delete_time = executionTime.count();
+				//find? need to write hash table function for this if so
 
-			exeBegin = high_resolution_clock::now();
-			myMap.erase("John");
-			exeEnd = high_resolution_clock::now();
-			executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
-			map_delete_time = executionTime.count();
+				//print all findings
+				//TODO - ADD O(N) CALCULATIONS
+				cout << "Time Complexity of Hash Table and Map Operations:\n\n"
+				"================Insertion================\n\n"
+				"Hash Table:\n"
+				"\t- Inserting one item: " << ht_insert_time << " nanoseconds\n"
+				"\t- Inserting all items: " << ht_insert_all << " milliseconds\n"
+				"Map:\n"
+				"\t- Inserting one item: " << map_insert_time << " nanoseconds\n"
+				"\t- Inserting all items: " << map_insert_all << " milliseconds\n\n"
+				"================Deletion================\n\n"
+				"Hash Table:\n"
+				"\t- Deleting one item: " << ht_delete_time << " nanoseconds\n"
+				"Map:\n"
+				"\t- Deleting one item: " << map_delete_time << " nanoseconds" << endl;
 
-			//find? need to write hash table function for this if so
 
-			//print all findings
-			//TODO - ADD O(N) CALCULATIONS
-			std::cout << endl;
-			std::cout << "Time Complexity of Hash Table and Map Operations:" << std::endl;
-			std::cout << "================Insertion================" << std::endl;
-			std::cout << "Hash Table:" << std::endl;
-			std::cout << "\tInserting one item: " << ht_insert_time << " nanoseconds" << std::endl;
-			std::cout << "\tInserting all items: " << ht_insert_all << " milliseconds" << std::endl;
-			std::cout << "Map:" << std::endl;
-			std::cout << "\tInserting one item: " << map_insert_time << " nanoseconds" << std::endl;
-			std::cout << "\tInserting all items: " << map_insert_all << " milliseconds" << std::endl;
-			std::cout << "================Deletion================" << std::endl;
-			std::cout << "Hash Table:" << std::endl;
-			std::cout << "\tDeleting one item: " << ht_delete_time << " nanoseconds" << std::endl;
-			std::cout << "Map:" << std::endl;
-			std::cout << "\tDeleting one item: " << map_delete_time << " nanoseconds" << std::endl;
+				break;
+			}
+			case 7:
+			{
+				//display hash table
+				myTable.displayTable(max);
 
-		}
-		else if (option == 7) {
-			//display hash table
-			myTable.displayTable();
-		}
-		else if (option == 8) {
-			//display map
-			cout << "Ordered Map Data:" << endl;
-			for (auto iter = myMap.begin(); iter != myMap.end(); iter++) {
-				cout << iter->first << " " << iter->second << endl;
+				break;
+			}
+			case 8:
+			{
+				//display map
+				cout << "Ordered Map Data:" << endl;
+				for (auto iter = myMap.begin(); iter != myMap.end(); iter++) {
+					cout << iter->first << " " << iter->second << endl;
+				}
+
+				break;
+			}
+			case 9:
+			{
+				//reprint options	
+				menu();
+
+				break;
+			}
+			default:
+			{
+				//invalid input
+				cout << "Error: Invalid Input" << endl;
+				menu();
 			}
 		}
-		else if (option == 9) {
-			//reprint options	
-			std::cout << "Select an option below" << std::endl;
-			std::cout << "Press 1 to import all data into both structures" << std::endl;
-			std::cout << "Press 2 to import your own data into a Hash Table" << std::endl;
-			std::cout << "Press 3 to import your own data into a Map" << std::endl;
-			std::cout << "Press 4 to delete data from a Hash Table" << std::endl;
-			std::cout << "Press 5 to delete data from a Map" << std::endl;
-			std::cout << "Press 6 to print time copmlexity anslysis of data structure operations" << std::endl;
-			std::cout << "Press 7 to display the Hash Table" << std::endl;
-			std::cout << "Press 8 to display the Map" << std::endl;
-			std::cout << "Press 9 to redisplay options" << std::endl;
-			std::cout << "Press 0 to quit" << std::endl;
-		}
-		std::cout << endl;
-		std::cout << "Enter another option or press 0 to quit: " << std::endl;
+		cout << "\nEnter another option or press 0 to quit (9 to redisplay options)\n\n";
+		cout << "Option: ";
 		cin >> option;
+		cout << endl;
 	}
 
-
-
+	return 0;
 }
-
-
 
 int readFile(vector<string>& names, string file)
 {
-	//takes in a csv file and parses through, storing names in a string vector
-	ifstream fileNames(file);
-	string inputName;
-	//if the file fails to open, throw a flag
-	if (!fileNames.is_open())
-		return 0;
-	getline(fileNames, inputName);
-	//read through the file, line by line, storing names until the end is reached
-	while (!fileNames.eof())
-	{
-		names.push_back(inputName);
-		//cout << inputName << endl;
-		getline(fileNames, inputName);
-	}
-	fileNames.close();
-	return 1;
+    //takes in a csv file and parses through, storing names in a string vector
+    ifstream fileNames(file);
+    string inputName;
+    //if the file fails to open, throw a flag
+    if (!fileNames.is_open())
+        return 0;
+    getline(fileNames, inputName);
+    //read through the file, line by line, storing names until the end is reached
+    while (!fileNames.eof())
+    {
+        names.push_back(inputName);
+        //cout << inputName << endl;
+        getline(fileNames, inputName);
+    }
+    fileNames.close();
+    return 1;
 }
 
 void generatePhoneNumbers(unordered_set<unsigned long int>& numbers, int max)
@@ -424,4 +309,32 @@ void generatePhoneNumbers(unordered_set<unsigned long int>& numbers, int max)
 		numbers.insert(temp);
 		//cout << temp << endl;
 	}
+}
+
+unsigned long int createMap(vector<pair<string, unsigned long int>>& phoneBook, map<string, unsigned long int>& newMap)
+{
+    auto exeBegin = chrono::high_resolution_clock::now(); //place before function execution
+    for (int i = 0; i < phoneBook.size(); i++)
+    {
+        newMap[phoneBook[i].first] = phoneBook[i].second;
+    }
+    auto exeEnd = chrono::high_resolution_clock::now(); //place after function execution
+    auto executionTime = chrono::duration_cast<chrono::nanoseconds>(exeEnd - exeBegin); // place after exeEnd
+    cout << executionTime.count() << " nanoseconds" << endl; //Output
+    return executionTime.count();
+}
+
+void menu()
+{
+	cout << "Select an option below\n"
+		"Press 1 to import all data into both structures\n"
+		"Press 2 to import your own data into a Hash Table\n"
+		"Press 3 to import your own data into a Map\n"
+		"Press 4 to delete data from a Hash Table\n"
+		"Press 5 to delete data from a Map\n"
+		"Press 6 to print time copmlexity anslysis of data structure operations\n"
+		"Press 7 to display the Hash Table\n"
+		"Press 8 to display the Map\n"
+		"Press 9 to redisplay options\n"
+		"Press 0 to quit\n" << endl;
 }
