@@ -84,7 +84,7 @@ int main()
 			{
 				//import all data and record time it takes
 
-				//INSERT ALL DATA INTO HASH TABLE HERE
+				//insert data into hash table
 				auto exeBegin = high_resolution_clock::now();
 				for (int i = 0; i < max; i++) {
 					myTable.insertItem(phoneBook.at(i).first, phoneBook.at(i).second);
@@ -94,7 +94,7 @@ int main()
 				ht_insert_all = executionTime.count();
 				cout << "Hash Table Insertion Complete" << endl;
 
-				//INSERT ALL DATA INTO MAP HERE
+				//insert data into map
 				exeBegin = high_resolution_clock::now();
 				for (auto x : phoneBook) {
 					myMap.insert(x);
@@ -108,7 +108,7 @@ int main()
 			}
 			case 2:
 			{
-				//import own data into hash table 
+				//import user data into hash table 
 				cout << "Enter the name to be added" << endl;
 				getline(cin, userName);
 				cin.ignore();
@@ -122,7 +122,7 @@ int main()
 			}
 			case 3:
 			{
-				//import own data into Map
+				//import user data into Map
 				cout << "Enter the name to be added" << std::endl;
 				getline(cin, userName);
 				cin.ignore();
@@ -136,7 +136,7 @@ int main()
 			}
 			case 4:
 			{
-				//delete own from hash table
+				//delete user data from hash table
 				cout << "Enter the name to be deleted" << endl;
 				getline(cin, userName);
 				cin.ignore();
@@ -147,7 +147,7 @@ int main()
 			}
 			case 5:
 			{
-				//delete from map
+				//delete user data from map
 				cout << "Enter the name to be deleted" << endl;
 				getline(cin, userName);
 				cin.ignore();
