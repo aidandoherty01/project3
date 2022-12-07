@@ -74,21 +74,14 @@ int main()
 	cin >> option;
 	cout << endl;
 
-	//FIX - IF SPACE IN INSERTED NAME, GIVES ERROR
-
 	//handle user input
 
 	while (option != 0) {
+		cin.ignore();
 		switch (option)
 		{
 			case 1:
 			{
-				/*
-				//clearing data
-				myTable.clear();
-				myMap.clear();
-				*/
-
 				//import all data and record time it takes
 
 				//INSERT ALL DATA INTO HASH TABLE HERE
@@ -118,6 +111,7 @@ int main()
 				//import own data into hash table 
 				cout << "Enter the name to be added" << endl;
 				getline(cin, userName);
+				cin.ignore();
 				cout << "Enter the number to be added" << endl;
 				cin >> userNumber;
 				//call insert function
@@ -131,7 +125,7 @@ int main()
 				//import own data into Map
 				cout << "Enter the name to be added" << std::endl;
 				getline(cin, userName);
-				//cin >> userName;
+				cin.ignore();
 				cout << "Enter the number to be added" << std::endl;
 				cin >> userNumber;
 				//call insert function
@@ -145,9 +139,9 @@ int main()
 				//delete own from hash table
 				cout << "Enter the name to be deleted" << endl;
 				getline(cin, userName);
+				cin.ignore();
 				//call delete function
 				myTable.deleteItem(userName);
-				cout << "Succesfully deleted data from Hash Table" << endl;
 
 				break;
 			}
@@ -155,10 +149,19 @@ int main()
 			{
 				//delete from map
 				cout << "Enter the name to be deleted" << endl;
-				cin >> userName;
+				getline(cin, userName);
+				cin.ignore();
+				//error handling
+				if (myMap.find(userName) == myMap.end())
+				{
+					cout << "Error: " << userName << " not found in Map" << endl;
+				}
 				//call delete function
-				myMap.erase(userName);
-				cout << "Succesfully deleted data from Map" << endl;
+				else
+				{
+					myMap.erase(userName);
+					cout << "Succesfully deleted data from Map" << endl;
+				}
 
 				break;
 			}
@@ -202,10 +205,7 @@ int main()
 				executionTime = duration_cast<nanoseconds>(exeEnd - exeBegin);
 				map_delete_time = executionTime.count();
 
-				//find? need to write hash table function for this if so
-
 				//print all findings
-				//TODO - ADD O(N) CALCULATIONS
 				cout << "Time Complexity of Hash Table and Map Operations:\n\n"
 				"================Insertion================\n\n"
 				"Hash Table:\n"
@@ -254,6 +254,7 @@ int main()
 				menu();
 			}
 		}
+		cin.ignore();
 		cout << "\nEnter another option or press 0 to quit (9 to redisplay options)\n\n";
 		cout << "Option: ";
 		cin >> option;
@@ -313,14 +314,14 @@ void generatePhoneNumbers(unordered_set<unsigned long int>& numbers, int max)
 
 unsigned long int createMap(vector<pair<string, unsigned long int>>& phoneBook, map<string, unsigned long int>& newMap)
 {
-    auto exeBegin = chrono::high_resolution_clock::now(); //place before function execution
+	auto exeBegin = chrono::high_resolution_clock::now();
     for (int i = 0; i < phoneBook.size(); i++)
     {
         newMap[phoneBook[i].first] = phoneBook[i].second;
     }
-    auto exeEnd = chrono::high_resolution_clock::now(); //place after function execution
-    auto executionTime = chrono::duration_cast<chrono::nanoseconds>(exeEnd - exeBegin); // place after exeEnd
-    cout << executionTime.count() << " nanoseconds" << endl; //Output
+    auto exeEnd = chrono::high_resolution_clock::now();
+    auto executionTime = chrono::duration_cast<chrono::nanoseconds>(exeEnd - exeBegin);
+    cout << executionTime.count() << " nanoseconds" << endl;
     return executionTime.count();
 }
 

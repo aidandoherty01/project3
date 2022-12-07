@@ -11,8 +11,7 @@ public:
 	void insertItem(std::string key, unsigned long int data);
 	void deleteItem(std::string key);
 	void displayTable(int size);
-	//void clear();
-	//~HashTable();
+	~HashTable();
 
 private:
 	std::list<std::pair<std::string, unsigned long int>>* items;
@@ -39,10 +38,13 @@ void HashTable::deleteItem(std::string key) {
 			break;
 		}
 	}
-
 	if (it != items[index].end()) {
 		items[index].erase(it);
-		//std::cout << "Deleting " << key << " at index " << index << std::endl;
+		std::cout << "Successfully deleted " << key << " from Table" << std::endl;
+	}
+	else
+	{
+		std::cout << "Error: " << key << " not found in Table" << std::endl;
 	}
 }
 
@@ -76,16 +78,7 @@ void HashTable::displayTable(int size) {
 	}
 }
 
-/*
-void HashTable::clear()
+HashTable::~HashTable()
 {
-	auto it = items->begin();
-	for (int i = 0; i < items->size(); i++)
-	{
-		while (!items[i].empty())
-		{
-			items[i].pop_back();
-		}
-	}
+	delete[] items;
 }
-*/
